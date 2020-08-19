@@ -2,7 +2,6 @@ console.log('Main!');
 
 import { locService } from './services/loc.service.js';
 import { mapService } from './services/map.service.js';
-import { utilService } from './services/util.service.js';
 
 
 var map;
@@ -11,9 +10,6 @@ var gLocTable = null;
 window.onload = () => {
     initLocTable()
     initMap()
-        .then(() => {
-            addMarker({ lat: 32.0749831, lng: 34.9120554 })
-        })
         .catch((x) => console.log('INIT MAP ERROR', x))
 
     locService.getPosition()
@@ -98,10 +94,11 @@ function onAddLocation(mapMouseEvent) {
     console.log(mapMouseEvent.latLng);
     let latLng = JSON.stringify(mapMouseEvent.latLng);
     latLng = JSON.parse(latLng);
-    addMarker(latLng)
+    // addMarker(latLng)
     map.panTo(latLng);
     locService.saveLoc(latLng);
     renderLocTable()
+    renderMarkers();
 }
 
 function initLocTable() {
@@ -122,8 +119,8 @@ function initLocTable() {
 }
 
 function renderMarkers() {
-    let locs = loadLocs();
+    let locs = locService.loadLocs();
     locs.forEach(loc => {
-        addMarker(loc.lat, loc.lng);
+        addMarker({ lat: loc.lat, lng: loc.lng });
     })
 }
