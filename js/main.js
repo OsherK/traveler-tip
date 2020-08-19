@@ -26,14 +26,14 @@ document.querySelector('.btn-go').addEventListener('click', (ev) => {
     const searchTerm = document.querySelector('.search-loc').value
     locService.getPosition(searchTerm).then((location) => {
         initMap(location.coords.lat, location.coords.lng)
-        panTo(location.coords.lat, location.coords.lng)
+        onAddLocation(location.coords);
         weatherService.getWeather(location.coords, location.city).then((res) => {
             renderWeather(res)
         })
     })
 })
 
-document.querySelector('.btn-my-loc').addEventListener('click', (ev) => {
+document.querySelector('.btn-my-loc').addEventListener('click', () => {
     console.log("Panning to user's location")
     let userPos
     locService.getPosition().then((pos) => {
