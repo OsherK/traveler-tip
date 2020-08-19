@@ -66,6 +66,7 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
     const urlParams = new URLSearchParams(window.location.search)
     const urlLat = urlParams.get('lat')
     const urlLng = urlParams.get('lng')
+    console.log('lat:', urlLat, 'lng', urlLng);
     if (urlLat && urlLng) {
         lat = +urlLat
         lng = +urlLng
