@@ -10,9 +10,20 @@ var gCurrLoc = null
 
 window.onload = () => {
   initLocTable()
-
   initMap()
-    .then(renderMarkers)
+    .then((res) => {
+      renderMarkers()
+      locService
+        .getLocName({ lat: 32.0749831, lng: 34.9120554 })
+        .then((name) => {
+          weatherService
+            .getWeather(
+              { lat: 32.0749831, lng: 34.9120554 },
+              name.address_components[2].long_name
+            )
+            .then(renderWeather)
+        })
+    })
     .catch((x) => console.log('INIT MAP ERROR', x))
   locService
     .getPosition()
@@ -29,9 +40,6 @@ document.querySelector('.btn-go').addEventListener('click', (ev) => {
   locService.getPosition(searchTerm).then((location) => {
     initMap(location.coords.lat, location.coords.lng)
     onAddLocation(location.coords)
-    weatherService.getWeather(location.coords, location.city).then((res) => {
-      renderWeather(res)
-    })
   })
 })
 
@@ -111,10 +119,14 @@ function renderLocTable() {
 }
 
 function onAddLocation(latLng) {
+  console.log(latLng)
   latLng = JSON.stringify(latLng)
   latLng = JSON.parse(latLng)
   locService.getLocName(latLng).then((name) => {
-    locService.saveLoc(latLng, name)
+    weatherService
+      .getWeather(latLng, name.address_components[2].long_name)
+      .then(renderWeather)
+    locService.saveLoc(latLng, name.formatted_address)
     map.panTo(latLng)
     renderLocTable()
     renderMarkers()
@@ -128,8 +140,16 @@ function initLocTable() {
     if (!targetData.func) return //If the clicked element does not have a function, return
 
     console.log('clicked a button!')
-    if (targetData.func === 'go') panTo(targetData.lat, targetData.lng)
-    else if (targetData.func === 'delete') {
+    if (targetData.func === 'go') {
+      panTo(targetData.lat, targetData.lng)
+      locService
+        .getLocName({ lat: targetData.lat, lng: targetData.lng })
+        .then((name) => {
+          weatherService
+            .getWeather(targetData, name.address_components[2].long_name)
+            .then(renderWeather)
+        })
+    } else if (targetData.func === 'delete') {
       onDelete(targetData.id)
     }
   })
