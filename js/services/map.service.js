@@ -3,6 +3,7 @@ export const mapService = {
 }
 
 
+
 function connectGoogleApi() {
     if (window.google) return Promise.resolve()
     const API_KEY = 'AIzaSyC7sT1JSz3f0o62sFfmtGwlLGnp1w9YdJk'; //TODO: Enter your API Key
