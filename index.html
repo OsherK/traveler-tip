@@ -8,24 +8,20 @@
   </head>
 
   <body>
-    <div class="header"><h1>Travel Tip</h1></div>
+    <div class="header">
+      <h1>Travel Tip</h1>
+    </div>
     <section class="main-container">
       <div class="search">
-        <input
-          type="text"
-          class="loc-search"
-          placeholder="Enter the place to travel to..."
-        />
-        <button class="btn btn-search">GO</button>
-        <button class="btn">My Location</button>
+        <input type="text" class="search-loc" />
+        <button class="btn-go">GO</button>
+        <button class="btn-my-loc">My Location</button>
       </div>
       <div class="map-container">
         <div class="info-container">
           <div class="weather info-item">Weather Will Be Here</div>
           <div class="loc-table info-item">
-            <table>
-              My Table
-            </table>
+            <table></table>
           </div>
         </div>
         <div id="map" style="width: 50%; height: 400px;"></div>
@@ -33,6 +29,7 @@
       <!-- <button class="btn">Click Me</button> -->
     </section>
 
+    <script src="lib/axios.js"></script>
     <script type="module" src="js/main.js"></script>
   </body>
 </html>

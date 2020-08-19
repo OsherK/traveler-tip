@@ -3,15 +3,16 @@ console.log('Main!')
 import { locService } from './services/loc.service.js'
 import { mapService } from './services/map.service.js'
 
-locService.getLocs().then((locs) => console.log('locs', locs))
+var map
+var gLocTable = null
 
 window.onload = () => {
-  mapService
-    .initMap()
+  initLocTable()
+  initMap()
     .then(() => {
-      mapService.addMarker({ lat: 32.0749831, lng: 34.9120554 })
+      addMarker({ lat: 32.0749831, lng: 34.9120554 })
     })
-    .catch(console.log('INIT MAP ERROR'))
+    .catch((x) => console.log('INIT MAP ERROR', x))
 
   locService
     .getPosition()
@@ -23,7 +24,93 @@ window.onload = () => {
     })
 }
 
-document.querySelector('.btn-search').addEventListener('click', (ev) => {
-  console.log('Aha!', ev.target)
-  mapService.panTo(35.6895, 139.6917)
+document.querySelector('.btn-go').addEventListener('click', (ev) => {
+  const searchTerm = document.querySelector('.search-loc').value
+  locService.getPosition(searchTerm).then((location) => {
+    initMap(location.coords.lat, location.coords.lng)
+    panTo(location.coords.lat, location.coords.lng)
+    addMarker(location.coords, location.fullAddress)
+  })
 })
+
+document.querySelector('.btn-my-loc').addEventListener('click', (ev) => {
+  console.log("Panning to user's location")
+  let userPos
+  locService.getPosition().then((pos) => {
+    userPos = pos.coords
+    console.log(userPos)
+    panTo(userPos.latitude, userPos.longitude)
+  })
+})
+
+function initMap(lat = 32.0749831, lng = 34.9120554) {
+  console.log('InitMap')
+  return mapService.connectGoogleApi().then(() => {
+    console.log('google available')
+    map = new google.maps.Map(document.querySelector('#map'), {
+      center: { lat, lng },
+      zoom: 15,
+    })
+    map.addListener('click', (mapMouseEvent) => {
+      let latLng = JSON.stringify(mapMouseEvent.latLng)
+      latLng = JSON.parse(latLng)
+      console.log(latLng)
+      map.panTo(latLng)
+      locService.saveLoc(latLng)
+      renderLocs()
+    })
+    console.log('Map!', map)
+  })
+}
+
+function addMarker(loc, address) {
+  console.log('im here: ', loc)
+  var marker = new google.maps.Marker({
+    position: loc,
+    map: map,
+    title: address,
+  })
+  return marker
+}
+
+function panTo(lat, lng) {
+  console.log(lat, lng)
+  var laLatLng = new google.maps.LatLng(lat, lng)
+  map.panTo(laLatLng)
+}
+
+function renderLocTable() {
+  let locs = locService.loadLocs()
+  console.log(locs)
+  let strHtml = `
+        <tr>
+            <th>Location</th>
+            <th>Go To</th>
+            <th>Delete</th>
+        </tr>`
+  locs.forEach((loc) => {
+    console.log(loc.lng)
+    strHtml += `
+        <tr>
+            <th>somewhere</th>
+            <th><button data-func="go" data-loc="${
+              (loc.lat, loc.lng)
+            }">Go</button></th>
+            <th><button data-func="delete">Delete</button></th>
+        </tr>
+        `
+  })
+  gLocTable.innerHTML = strHtml
+}
+
+function initLocTable() {
+  gLocTable = document.querySelector('table')
+  gLocTable.addEventListener('click', (ev) => {
+    let targetData = ev.target.dataset
+    if (!targetData.func) return
+    console.log('clicked a button!')
+    if (targetData.func === 'go') panTo(targetData.loc)
+  })
+
+  renderLocTable()
+}
