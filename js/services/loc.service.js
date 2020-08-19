@@ -33,7 +33,8 @@ function getLocName(latLng) {
     const API_KEY = 'AIzaSyC7sT1JSz3f0o62sFfmtGwlLGnp1w9YdJk';
     const res = axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.lat}, ${latLng.lng}&key=${API_KEY}`)
     const prm = res.then(loc => {
-        return loc.data.results[0].formatted_address;
+        console.log(loc.data.results[0]);
+        return loc.data.results[0];
     })
     return prm;
 }
