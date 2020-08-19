@@ -81,3 +81,17 @@ body {
 .loc-table table {
     width: 100%;
 }
+
+.curr-loc {
+    padding: 20px;
+    width: 90%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.curr-loc-details {
+    width: 50%;
+    justify-content: space-around;
+    display: flex;
+}

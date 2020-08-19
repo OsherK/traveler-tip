@@ -2,6 +2,8 @@ export const locService = {
     getPosition,
     loadLocs,
     saveLoc,
+    getLocName,
+    removeLoc
 }
 
 function getPosition(searchTerm = null) {
@@ -27,6 +29,22 @@ function getPosition(searchTerm = null) {
     return prmData
 }
 
+function getLocName(latLng) {
+    const API_KEY = 'AIzaSyC7sT1JSz3f0o62sFfmtGwlLGnp1w9YdJk';
+    const res = axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.lat}, ${latLng.lng}&key=${API_KEY}`)
+    const prm = res.then(loc => {
+        return loc.data.results[0].formatted_address;
+    })
+    return prm;
+}
+
+function removeLoc(id) {
+    let locs = loadLocs()
+    const locIdx = locs.findIndex(loc => loc.id === id);
+    locs.splice(locIdx, 1);
+    localStorage.setItem('locs', JSON.stringify(locs));
+}
+
 function loadLocs() {
     let locs = localStorage.getItem('locs')
     if (!locs) locs = []
@@ -34,17 +52,18 @@ function loadLocs() {
     return locs
 }
 
-function saveLoc(latLng) {
-    let locs = loadLocs()
-    latLng.createdAt = new Date()
+function saveLoc(latLng, name) {
+    let locs = loadLocs();
+    latLng.createdAt = new Date();
     latLng.id = makeId();
-    locs.push(latLng)
-    localStorage.setItem('locs', JSON.stringify(locs))
+    latLng.name = name;
+    locs.push(latLng);
+    localStorage.setItem('locs', JSON.stringify(locs));
 }
 
 function makeId() {
     let id = '';
-    let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+    let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
     for (let i = 0; i < 10; i++) {
         id += chars.charAt(getRandomInteger(chars.length));
     }
