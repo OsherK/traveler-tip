@@ -1,15 +1,7 @@
 export const locService = {
-    getLocs: getLocs,
-    getPosition: getPosition
-}
-var locs = [{ lat: 11.22, lng: 22.11 }]
-
-function getLocs() {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(locs);
-        }, 2000)
-    });
+    getPosition,
+    loadLocs,
+    saveLoc
 }
 
 
@@ -21,3 +13,15 @@ function getPosition() {
     })
 }
 
+function loadLocs() {
+    let locs = localStorage.getItem('locs');
+    if (!locs) locs = [];
+    else locs = JSON.parse(localStorage.getItem('locs'));
+    return locs;
+}
+
+function saveLoc(latLng) {
+    let locs = loadLocs();
+    locs.push(latLng);
+    localStorage.setItem('locs', JSON.stringify(locs));
+}
