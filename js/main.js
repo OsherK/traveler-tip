@@ -6,18 +6,22 @@ import { weatherService } from './services/weather.service.js'
 
 var map
 var gLocTable = null
+var gCurrLoc = null
 
 window.onload = () => {
     initLocTable()
     initMap()
-        .then(res => {
-            renderMarkers();
-            locService.getLocName({ lat: 32.0749831, lng: 34.9120554 })
-                .then(name => {
-                    weatherService.getWeather({ lat: 32.0749831, lng: 34.9120554 }, name.address_components[2].long_name)
+        .then((res) => {
+            renderMarkers()
+            locService
+                .getLocName({ lat: 32.0749831, lng: 34.9120554 })
+                .then((name) => {
+                    weatherService
+                        .getWeather({ lat: 32.0749831, lng: 34.9120554 },
+                            name.address_components[2].long_name
+                        )
                         .then(renderWeather)
                 })
-
         })
         .catch((x) => console.log('INIT MAP ERROR', x))
     locService
@@ -34,12 +38,11 @@ document.querySelector('.btn-go').addEventListener('click', (ev) => {
     const searchTerm = document.querySelector('.search-loc').value
     locService.getPosition(searchTerm).then((location) => {
         initMap(location.coords.lat, location.coords.lng)
-        onAddLocation(location.coords);
+        onAddLocation(location.coords)
     })
 })
 
 document.querySelector('.btn-my-loc').addEventListener('click', () => {
-    console.log("Panning to user's location")
     let userPos
     locService.getPosition().then((pos) => {
         userPos = pos.coords
@@ -48,7 +51,25 @@ document.querySelector('.btn-my-loc').addEventListener('click', () => {
     })
 })
 
+document.querySelector('.get-url').addEventListener('click', () => {
+    const strURL = `https://osherk.github.io/traveler-tip/index.html?lat=${gCurrLoc.lat}&lng=${gCurrLoc.lng}`
+    console.log(strURL);
+    let txtEl = document.createElement('textarea')
+    txtEl.value = strURL
+    document.body.appendChild(txtEl)
+    txtEl.select()
+    document.execCommand('copy')
+    document.body.removeChild(txtEl)
+})
+
 function initMap(lat = 32.0749831, lng = 34.9120554) {
+    const urlParams = new URLSearchParams(window.location.search)
+    const urlLat = urlParams.get('lat')
+    const urlLng = urlParams.get('lng')
+    if (urlLat && urlLng) {
+        lat = +urlLat
+        lng = +urlLng
+    }
     return mapService.connectGoogleApi().then(() => {
         console.log('google available')
         map = new google.maps.Map(document.querySelector('#map'), {
@@ -58,6 +79,7 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
         map.addListener('click', (event) => {
             onAddLocation(event.latLng)
         })
+        gCurrLoc = { lat, lng }
         console.log('Map!', map)
     })
 }
@@ -73,6 +95,7 @@ function addMarker(loc) {
 
 function panTo(lat, lng) {
     var laLatLng = new google.maps.LatLng(lat, lng)
+    gCurrLoc = { lat, lng }
     map.panTo(laLatLng);
     locService.getLocName({ lat, lng })
         .then(name => {
@@ -123,12 +146,15 @@ function initLocTable() {
         console.log('clicked a button!')
         if (targetData.func === 'go') {
             panTo(targetData.lat, targetData.lng)
-            locService.getLocName({ lat: targetData.lat, lng: targetData.lng }).then(name => {
-                weatherService.getWeather(targetData, name.address_components[2].long_name)
-                    .then(renderWeather)
-            })
+            locService
+                .getLocName({ lat: targetData.lat, lng: targetData.lng })
+                .then((name) => {
+                    weatherService
+                        .getWeather(targetData, name.address_components[2].long_name)
+                        .then(renderWeather)
+                })
         } else if (targetData.func === 'delete') {
-            onDelete(targetData.id);
+            onDelete(targetData.id)
         }
     })
 
@@ -136,10 +162,9 @@ function initLocTable() {
 }
 
 function onDelete(id) {
-    locService.removeLoc(id);
-    renderLocTable();
-    initMap()
-        .then(renderMarkers)
+    locService.removeLoc(id)
+    renderLocTable()
+    initMap().then(renderMarkers)
 }
 
 function renderMarkers() {
