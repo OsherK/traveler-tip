@@ -94,6 +94,17 @@ function renderLocTable() {
   gLocTable.innerHTML = strHtml
 }
 
+function onAddLocation(mapMouseEvent) {
+  console.log(mapMouseEvent.latLng)
+  let latLng = JSON.stringify(mapMouseEvent.latLng)
+  latLng = JSON.parse(latLng)
+  // addMarker(latLng)
+  map.panTo(latLng)
+  locService.saveLoc(latLng)
+  renderLocTable()
+  renderMarkers()
+}
+
 function initLocTable() {
   gLocTable = document.querySelector('table')
   gLocTable.addEventListener('click', (ev) => {
@@ -109,4 +120,11 @@ function initLocTable() {
   })
 
   renderLocTable()
+}
+
+function renderMarkers() {
+  let locs = locService.loadLocs()
+  locs.forEach((loc) => {
+    addMarker({ lat: loc.lat, lng: loc.lng })
+  })
 }

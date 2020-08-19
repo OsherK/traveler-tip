@@ -2,6 +2,7 @@ export const mapService = {
     connectGoogleApi
 }
 
+var markers = null;
 
 function connectGoogleApi() {
     if (window.google) return Promise.resolve()
