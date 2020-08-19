@@ -1,18 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <title>Travel Tip</title>
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ES6</title>
-</head>
-
-<body>
-    <h1>ES6</h1>
-    <div id="map" style="width: 50%; height: 400px;"></div>
-    <button class="btn">Click Me</button>
+  <body>
+    <div class="header"><h1>Travel Tip</h1></div>
+    <section class="main-container">
+      <div class="search">
+        <input type="text" />
+        <button class="btn">GO</button>
+        <button class="btn">My Location</button>
+      </div>
+      <div class="map-container">
+        <div class="info-container">
+          <div class="weather info-item">Weather Will Be Here</div>
+          <div class="loc-table info-item">
+            <table>
+              My Table
+            </table>
+          </div>
+        </div>
+        <div id="map" style="width: 50%; height: 400px;"></div>
+      </div>
+      <!-- <button class="btn">Click Me</button> -->
+    </section>
 
     <script type="module" src="js/main.js"></script>
-</body>
-
+  </body>
 </html>
