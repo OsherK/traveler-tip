@@ -27,6 +27,18 @@ body {
     justify-content: center;
 }
 
+.loc-search {
+    width: 40%;
+    padding: 0 10px;
+    border-radius: 10px;
+    outline: none;
+    border: 1px darkblue solid;
+}
+
+.loc-search:focus {
+    border: 2px darkorange solid;
+}
+
 .btn {
     padding: 10px;
     background: darkorange;

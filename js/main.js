@@ -8,41 +8,41 @@ import { utilService } from './services/util.service.js';
 var map;
 var gLocTable = null;
 
-
-
 window.onload = () => {
-    initLocTable();
+    initLocTable()
     initMap()
-        .catch(x => console.log('INIT MAP ERROR', x));
+        .then(() => {
+            addMarker({ lat: 32.0749831, lng: 34.9120554 })
+        })
+        .catch((x) => console.log('INIT MAP ERROR', x))
 
     locService.getPosition()
-        .then(pos => {
-
-            console.log('User position is:', pos.coords);
+        .then((pos) => {
+            console.log('User position is:', pos.coords)
         })
-        .catch(err => {
-            console.log('Cannot get user-position', err);
+        .catch((err) => {
+            console.log('Cannot get user-position', err)
         })
 }
 
 document.querySelector('.btn-go').addEventListener('click', (ev) => {
-    console.log('Aha!', ev.target);
-    panTo(35.6895, 139.6917);
+    const searchTerm = document.querySelector('.search-loc').value
+    locService.getPosition(searchTerm).then((location) => {
+        initMap(location.coords.lat, location.coords.lng)
+        panTo(location.coords.lat, location.coords.lng)
+        addMarker(location.coords, location.fullAddress)
+    })
 })
 
 document.querySelector('.btn-my-loc').addEventListener('click', (ev) => {
-    console.log('Panning to user\'s location');
-    let userPos;
-    locService.getPosition()
-        .then(pos => {
-            userPos = pos.coords;
-            console.log(userPos);
-            panTo(userPos.latitude, userPos.longitude);
-        })
-
-
+    console.log("Panning to user's location")
+    let userPos
+    locService.getPosition().then((pos) => {
+        userPos = pos.coords
+        console.log(userPos)
+        panTo(userPos.latitude, userPos.longitude)
+    })
 })
-
 
 function initMap(lat = 32.0749831, lng = 34.9120554) {
     console.log('InitMap');
@@ -59,13 +59,14 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
         })
 }
 
-function addMarker(loc) {
+function addMarker(loc, address) {
+    console.log('im here: ', loc)
     var marker = new google.maps.Marker({
         position: loc,
         map: map,
-        title: 'Hello World!'
-    });
-    return marker;
+        title: address,
+    })
+    return marker
 }
 
 function panTo(lat, lng) {
@@ -90,7 +91,7 @@ function renderLocTable() {
         </tr>
         `
     })
-    gLocTable.innerHTML = strHtml;
+    gLocTable.innerHTML = strHtml
 }
 
 function onAddLocation(mapMouseEvent) {
@@ -118,4 +119,11 @@ function initLocTable() {
     })
 
     renderLocTable();
+}
+
+function renderMarkers() {
+    let locs = loadLocs();
+    locs.forEach(loc => {
+        addMarker(loc.lat, loc.lng);
+    })
 }
