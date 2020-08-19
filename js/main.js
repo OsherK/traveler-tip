@@ -5,10 +5,12 @@ import { mapService } from './services/map.service.js';
 
 
 var map;
+var gLocTable = null;
 
 
 
 window.onload = () => {
+    initLocTable();
     initMap()
         .then(() => {
 
@@ -56,7 +58,9 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
                     zoom: 15
                 })
             map.addListener('click', mapMouseEvent => {
-                let latLng = mapMouseEvent.latLng
+                let latLng = JSON.stringify(mapMouseEvent.latLng);
+                latLng = JSON.parse(latLng);
+                console.log(latLng);
                 map.panTo(latLng);
                 locService.saveLoc(latLng);
                 renderLocs()
@@ -75,11 +79,41 @@ function addMarker(loc) {
 }
 
 function panTo(lat, lng) {
+    console.log(lat, lng);
     var laLatLng = new google.maps.LatLng(lat, lng);
     map.panTo(laLatLng);
 }
 
-function renderLocs() {
+function renderLocTable() {
     let locs = locService.loadLocs();
     console.log(locs);
+    let strHtml = `
+        <tr>
+            <th>Location</th>
+            <th>Go To</th>
+            <th>Delete</th>
+        </tr>`;
+    locs.forEach(loc => {
+        console.log(loc.lng);
+        strHtml += `
+        <tr>
+            <th>somewhere</th>
+            <th><button data-func="go" data-loc="${loc.lat, loc.lng}">Go</button></th>
+            <th><button data-func="delete">Delete</button></th>
+        </tr>
+        `
+    })
+    gLocTable.innerHTML = strHtml;
+}
+
+function initLocTable() {
+    gLocTable = document.querySelector('table');
+    gLocTable.addEventListener('click', (ev) => {
+        let targetData = ev.target.dataset;
+        if (!targetData.func) return;
+        console.log('clicked a button!');
+        if (targetData.func === 'go') panTo(targetData.loc);
+    })
+
+    renderLocTable();
 }

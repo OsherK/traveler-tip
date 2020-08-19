@@ -22,6 +22,7 @@ function loadLocs() {
 
 function saveLoc(latLng) {
     let locs = loadLocs();
+    latLng.createdAt = new Date();
     locs.push(latLng);
     localStorage.setItem('locs', JSON.stringify(locs));
 }
