@@ -74,6 +74,11 @@ function addMarker(loc) {
 function panTo(lat, lng) {
     var laLatLng = new google.maps.LatLng(lat, lng)
     map.panTo(laLatLng);
+    locService.getLocName({ lat, lng })
+        .then(name => {
+            weatherService.getWeather({ lat, lng }, name.address_components[2].long_name)
+                .then(renderWeather)
+        })
 }
 
 function renderLocTable() {
@@ -97,7 +102,6 @@ function renderLocTable() {
 }
 
 function onAddLocation(latLng) {
-    console.log(latLng);
     latLng = JSON.stringify(latLng)
     latLng = JSON.parse(latLng);
     locService.getLocName(latLng).then(name => {
