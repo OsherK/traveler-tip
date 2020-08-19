@@ -2,6 +2,7 @@ console.log('Main!')
 
 import { locService } from './services/loc.service.js'
 import { mapService } from './services/map.service.js'
+import { weatherService } from './services/weather.service.js'
 
 var map
 var gLocTable = null
@@ -24,8 +25,11 @@ window.onload = () => {
 document.querySelector('.btn-go').addEventListener('click', (ev) => {
     const searchTerm = document.querySelector('.search-loc').value
     locService.getPosition(searchTerm).then((location) => {
-        onAddLocation(location.coords)
-            // addMarker(location.coords, location.fullAddress)
+        initMap(location.coords.lat, location.coords.lng)
+        panTo(location.coords.lat, location.coords.lng)
+        weatherService.getWeather(location.coords, location.city).then((res) => {
+            renderWeather(res)
+        })
     })
 })
 
@@ -128,6 +132,23 @@ function renderMarkers() {
     })
 }
 
-function renderLocationName() {
-
+function renderWeather(weatherData) {
+    const {
+        locationName,
+        desc,
+        icon,
+        currentTemp,
+        mainWeather,
+        maxTemp,
+        minTemp,
+        wind,
+    } = weatherData
+    const strHTML = `
+        <img src="img/${icon}.png"></img>
+        <h2>${locationName}, ${currentTemp} ${mainWeather}</h2>
+        <h3 class="text-secondary weather-desc">${desc}</h3>
+        <strong>From: ${minTemp} to ${maxTemp}</strong>
+        <p>Wind Speed: ${wind}</p>
+    `
+    document.querySelector('.weather').innerHTML = strHTML
 }
