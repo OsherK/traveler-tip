@@ -8,11 +8,7 @@ var gLocTable = null
 
 window.onload = () => {
   initLocTable()
-  initMap()
-    .then(() => {
-      addMarker({ lat: 32.0749831, lng: 34.9120554 })
-    })
-    .catch((x) => console.log('INIT MAP ERROR', x))
+  initMap().catch((x) => console.log('INIT MAP ERROR', x))
 
   locService
     .getPosition()
@@ -29,7 +25,7 @@ document.querySelector('.btn-go').addEventListener('click', (ev) => {
   locService.getPosition(searchTerm).then((location) => {
     initMap(location.coords.lat, location.coords.lng)
     panTo(location.coords.lat, location.coords.lng)
-    addMarker(location.coords, location.fullAddress)
+    // addMarker(location.coords, location.fullAddress)
   })
 })
 
@@ -44,7 +40,6 @@ document.querySelector('.btn-my-loc').addEventListener('click', (ev) => {
 })
 
 function initMap(lat = 32.0749831, lng = 34.9120554) {
-  console.log('InitMap')
   return mapService.connectGoogleApi().then(() => {
     console.log('google available')
     map = new google.maps.Map(document.querySelector('#map'), {
@@ -59,16 +54,17 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
       locService.saveLoc(latLng)
       renderLocs()
     })
+    addMarker({ lat, lng })
     console.log('Map!', map)
   })
 }
 
-function addMarker(loc, address) {
+function addMarker(loc) {
   console.log('im here: ', loc)
   var marker = new google.maps.Marker({
     position: loc,
     map: map,
-    title: address,
+    title: 'address',
   })
   return marker
 }
