@@ -4,40 +4,43 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/styles.css" />
     <title>Travel Tip</title>
 </head>
 
 <body>
     <div class="header">
-        <h1>Travel Tip</h1>
+        <i class="fas fa-plane fa-2x" style="color:white;"></i>
+        <h1 style="color:white;">Traveler Tip</h1>
     </div>
     <section class="main-container">
         <div class="search">
-            <input type="text" class="search-loc" />
+            <input type="text" class="search-loc" placeholder="Enter a place you want to travel to..."/>
             <button class="btn btn-go">GO</button>
             <button class="btn btn-my-loc">My Location</button>
         </div>
         <div class="curr-loc">
             <div class="curr-loc-details">
-                <h2>Location</h2>
-                <h5 class="curr-loc-name">name foes here</h5>
+                <h2>Location:</h2>
+                <span class="loc-city" style="font-size: 1.5rem;"></span>
             </div>
-            <button class="get-url">Copy Location</button>
+            <button class="btn get-url">Copy Location</button>
         </div>
         <div class="map-container">
             <div class="info-container">
                 <div class="weather info-item">Weather Will Be Here</div>
-                <div class="loc-table info-item">
-                    <table>
+                <div class="info-item">
+                    <table class="loc-table" cellpadding="20">
+
                     </table>
                 </div>
             </div>
-            <div id="map" style="width: 50%; height: 400px;"></div>
+            <div id="map" class="info-container" ></div>
         </div>
-        <div id="map" style="width: 50%; height: 400px;"></div>
         </div>
-        <!-- <button class="btn">Click Me</button> -->
+
     </section>
 
     <script src="lib/axios.js"></script>

@@ -101,7 +101,7 @@ function panTo(lat, lng) {
 function renderLocTable() {
   let locs = locService.loadLocs()
   let strHtml = `
-        <tr>
+        <tr style="background: darkslateblue; border: 2px solid black; color:white;">
             <th>Location</th>
             <th>Go To</th>
             <th>Delete</th>
@@ -109,9 +109,9 @@ function renderLocTable() {
   locs.forEach((loc) => {
     strHtml += `
         <tr>
-            <th>${loc.name}</th>
-            <th><button class="btn" data-func="go" data-lat="${loc.lat}" data-lng="${loc.lng}"">Go</button></th>
-            <th><button class="btn" data-func="delete" data-id="${loc.id}">Delete</button></th>
+            <th style="background: lightgray;">${loc.name}</th>
+            <th style="background: lightgray;"><button class="btn btn-move" data-func="go" data-lat="${loc.lat}" data-lng="${loc.lng}"">Go</button></th>
+            <th style="background: lightgray;"><button class="btn btn-delete" data-func="delete" data-id="${loc.id}">Delete</button></th>
         </tr>
         `
   })
@@ -181,12 +181,14 @@ function renderWeather(weatherData) {
     minTemp,
     wind,
   } = weatherData
+  const locStrHTML = `${locationName}`
+  document.querySelector('.loc-city').innerHTML = locStrHTML
   const strHTML = `
         <img src="img/${icon}.png"></img>
         <h2>${locationName}, ${currentTemp} ${mainWeather}</h2>
-        <h3 class="text-secondary weather-desc">${desc}</h3>
-        <strong>From: ${minTemp} to ${maxTemp}</strong>
-        <p>Wind Speed: ${wind}</p>
+        <h3>${desc}</h3>
+        <strong>Temperature: </strong><span>${minTemp} to ${maxTemp}</span>
+        <strong>Wind Speed: </strong><span>${wind}</span>
     `
   document.querySelector('.weather').innerHTML = strHTML
 }
