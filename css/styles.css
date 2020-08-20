@@ -142,11 +142,11 @@ th {
   width: 90%;
   margin: 20px auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 
 .curr-loc-details {
-  width: 50%;
-  justify-content: space-around;
+  width: 40%;
+  justify-content: space-evenly;
   display: flex;
 }

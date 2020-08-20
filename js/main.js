@@ -54,6 +54,7 @@ document.querySelector('.btn-my-loc').addEventListener('click', () => {
 
 document.querySelector('.get-url').addEventListener('click', () => {
   const strURL = `https://osherk.github.io/traveler-tip/index.html?lat=${gCurrLoc.lat}&lng=${gCurrLoc.lng}`
+  console.log(strURL)
   let txtEl = document.createElement('textarea')
   txtEl.value = strURL
   document.body.appendChild(txtEl)
@@ -66,6 +67,7 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
   const urlParams = new URLSearchParams(window.location.search)
   const urlLat = urlParams.get('lat')
   const urlLng = urlParams.get('lng')
+  console.log('lat:', urlLat, 'lng', urlLng)
   if (urlLat && urlLng) {
     lat = +urlLat
     lng = +urlLng
@@ -95,7 +97,13 @@ function addMarker(loc) {
 
 function panTo(lat, lng) {
   var laLatLng = new google.maps.LatLng(lat, lng)
+  gCurrLoc = { lat, lng }
   map.panTo(laLatLng)
+  locService.getLocName({ lat, lng }).then((name) => {
+    weatherService
+      .getWeather({ lat, lng }, name.address_components[2].long_name)
+      .then(renderWeather)
+  })
 }
 
 function renderLocTable() {
@@ -119,7 +127,6 @@ function renderLocTable() {
 }
 
 function onAddLocation(latLng) {
-  console.log(latLng)
   latLng = JSON.stringify(latLng)
   latLng = JSON.parse(latLng)
   locService.getLocName(latLng).then((name) => {
